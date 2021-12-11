@@ -24,6 +24,7 @@ const App = () => {
       <Button text="good" handleClick={handleClickButtonGood} />
       <Button text="neutral" handleClick={handleClickButtonNeutral} />
       <Button text="bad" handleClick={handleClickButtonBad} />
+      <h1>Statistics</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   );

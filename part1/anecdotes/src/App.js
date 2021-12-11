@@ -52,10 +52,15 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <Content anecdote={anecdotes[selected]} />
       <VotePoints point={points[selected]} />
-      <Button text="vote" onClick={() => handleClick(handleVote, selected)} />
-      <Button text="next" onClick={() => handleClick(handleSelect)} />
+      <Button
+        text="vote"
+        handleClick={() => handleClick(handleVote, selected)}
+      />
+      <Button text="next" handleClick={() => handleClick(handleSelect)} />
+      <h1>Anecdote with most voted</h1>
       {<HighestRated anecdote={anecdotes[getHighestRatedIndex()]} />}
     </div>
   );
