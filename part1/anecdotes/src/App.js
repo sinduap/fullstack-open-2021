@@ -61,7 +61,7 @@ const App = () => {
       />
       <Button text="next" handleClick={() => handleClick(handleSelect)} />
       <h1>Anecdote with most voted</h1>
-      {<HighestRated anecdote={anecdotes[getHighestRatedIndex()]} />}
+      <HighestRated anecdote={anecdotes[getHighestRatedIndex()]} />
     </div>
   );
 };
