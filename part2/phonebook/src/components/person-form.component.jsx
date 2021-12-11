@@ -1,15 +1,15 @@
 import React from "react";
 
-const Form = ({ handleSubmit, newName, newPhone, handleChange }) => {
+const Form = ({ handleSubmit, name, number, handleChange }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
         name:{" "}
-        <input name="name" value={newName} onChange={handleChange} required />
+        <input name="name" value={name} onChange={handleChange} required />
       </div>
       <div>
         number:{" "}
-        <input name="phone" value={newPhone} onChange={handleChange} required />
+        <input name="number" value={number} onChange={handleChange} required />
       </div>
       <div>
         <button type="submit">add</button>
