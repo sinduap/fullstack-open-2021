@@ -1,12 +1,14 @@
 import React from "react";
+import Button from "./button.component";
 
-const Person = ({ filteredPersons }) => {
+const Person = ({ filteredPersons, handleDelete }) => {
   return (
     <div>
-      {filteredPersons.map(({ name, number, id }) => (
-        <p key={id}>
+      {filteredPersons.map(({ name, number, id }, idx) => (
+        <div key={idx}>
           {name} {number}
-        </p>
+          <Button text="delete" handleDelete={() => handleDelete(id, name)} />
+        </div>
       ))}
     </div>
   );
