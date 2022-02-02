@@ -1,111 +1,113 @@
-import React, { useState, useEffect } from "react";
-import PersonForm from "./components/person-form.component";
-import Persons from "./components/persons.component";
-import Filter from "./components/filter.component";
-import { getPersons, addPerson, deletePerson, changePerson } from "./helpers";
+import React, { useState, useEffect } from 'react';
+import AddContactForm from './components/add-contact-form.component';
+import PersonList from './components/person-list.component';
+import FilterField from './components/filter-field.component';
+import { getPersons, addPerson, deletePerson, changePerson } from './helpers';
+import Notification from './components/notification.component';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [search, setSearch] = useState("");
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [search, setSearch] = useState('');
+  const [message, setMessage] = useState(null);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setNewName("");
-    setNewNumber("");
-
-    // If person already added
-    if (persons.find((person) => person.name === newName)) {
-      // eslint-disable-next-line no-restricted-globals
-      const corfimationMessage = confirm(
-        `${newName} is already added to phonebook, replace old number with the new one?`
-      );
-      if (!corfimationMessage) return;
-      const [{ id }] = persons.filter((person) => person.name === newName);
-
-      try {
-        changePerson(id, { name: newName, number: newNumber });
-        setPersons([
-          ...persons.filter((person) => person.name !== newName),
-          { id, name: newName, number: newNumber },
-        ]);
-      } catch (error) {
-        console.error(error);
-      }
-
-      return;
-    }
-
-    // if person wasn't already added
-    try {
-      await addPerson({ name: newName, number: newNumber });
-      setPersons([
-        ...persons,
-        {
-          id: persons[persons.length - 1].id + 1,
-          name: newName,
-          number: newNumber,
-        },
-      ]);
-    } catch (error) {
-      console.error(error);
-    }
+  const loadPersons = async function () {
+    const data = await getPersons();
+    setPersons(data);
   };
 
-  const handleDelete = async (id, name) => {
-    // eslint-disable-next-line no-restricted-globals
-    const confirmationMessage = confirm(`Delete ${name}?`);
+  const handleSubmit = async function (event) {
+    event.preventDefault();
+    setNewName('');
+    setNewNumber('');
+
+    let person = persons.find(
+      person => person.name.toLowerCase() === newName.toLowerCase().trim()
+    );
+
+    // if person already on contact
+    if (
+      person &&
+      !window.confirm(`Are you want to update ${person.name} contact?`)
+    )
+      return;
+
+    if (person) {
+      const message = await changePerson(person.id, {
+        ...person,
+        number: newNumber.trim(),
+      });
+      setMessage(message);
+      setTimeout(() => setMessage(null), 2000);
+    }
+
+    // if person is not already on contact
+    if (!person) {
+      person = {
+        id: persons.length + 1,
+        name: newName.trim(),
+        number: newNumber.trim(),
+      };
+      const message = await addPerson(person);
+      setMessage(message);
+      setTimeout(() => setMessage(null), 2000);
+    }
+
+    loadPersons();
+  };
+
+  const handleDelete = async function (id, name) {
+    const confirmationMessage = window.confirm(
+      `Are you want to delete ${name} contact?`
+    );
     if (!confirmationMessage) return;
     try {
-      await deletePerson(id);
-      setPersons(persons.filter((person) => person.id !== id));
+      const message = await deletePerson(id);
+      setMessage(message);
+      setTimeout(() => setMessage(null), 2000);
+      loadPersons();
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      const data = await getPersons();
-      setPersons(data);
-    };
-    getData();
-  }, []);
+  useEffect(loadPersons, []);
 
-  const handleChange = (event) => {
-    switch (event.target.name) {
-      case "name":
-        setNewName(event.target.value);
-        return;
-      case "number":
-        setNewNumber(event.target.value);
-        return;
-      case "filter":
-        setSearch(event.target.value);
-        return;
-      default:
-        return;
-    }
+  const handleNameChange = function (event) {
+    setNewName(event.target.value);
   };
 
-  const filteredPersons = persons.filter((person) =>
-    person.name.toLowerCase().includes(search.toLowerCase())
+  const handleNumberChange = function (event) {
+    setNewNumber(event.target.value);
+  };
+
+  const handleSearchChange = function (event) {
+    setSearch(event.target.value);
+  };
+
+  const filteredPersons = persons.filter(person =>
+    person.name.toLowerCase().includes(search.toLowerCase().trim())
   );
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter handleChange={handleChange} />
+      <Notification message={message} />
+      <FilterField handleSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
-      <PersonForm
-        handleChange={handleChange}
+      <AddContactForm
+        handleNumberChange={handleNumberChange}
+        handleNameChange={handleNameChange}
         name={newName}
         number={newNumber}
         handleSubmit={handleSubmit}
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} />
+      <PersonList
+        filteredPersons={filteredPersons}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };
