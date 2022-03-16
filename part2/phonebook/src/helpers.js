@@ -16,8 +16,8 @@ export const getPersons = async () => {
 
 export const deletePerson = async id => {
   try {
-    await axios.delete(`${API_URL}${id}`)
-    return 'Person had been deleted'
+    const response = await axios.delete(`${API_URL}/${id}`)
+    return response.data
   } catch (error) {
     console.error(error)
     throw error
@@ -26,8 +26,8 @@ export const deletePerson = async id => {
 
 export const addPerson = async person => {
   try {
-    await axios.post(API_URL, person)
-    return 'Person had been added'
+    const response = await axios.post(API_URL, person)
+    return response.data
   } catch (error) {
     console.error(error)
     throw error
@@ -36,9 +36,8 @@ export const addPerson = async person => {
 
 export const editPerson = async (id, person) => {
   try {
-    await axios.put(`${API_URL}${id}`, person)
-
-    return 'Person had been updated'
+    const response = await axios.put(`${API_URL}/${id}`, person)
+    return response.data
   } catch (error) {
     console.error(error)
     throw error

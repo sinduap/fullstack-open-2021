@@ -11,8 +11,8 @@ POST http://localhost:3001/api/persons HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Sindu Andita Pratama",
+    "name": "Sindu AP",
     "number": "651-123-971"
 }
 ###
-GET http://localhost:3001/api/personsd
+GET http://localhost:3001/api/persons

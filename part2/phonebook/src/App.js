@@ -24,7 +24,7 @@ const App = () => {
     setNumber('')
 
     let person = persons.find(
-      person => person.name.toLowerCase() === name.toLowerCase().trim()
+      p => p.name.toLowerCase() === name.toLowerCase().trim()
     )
 
     // if person already on contact
@@ -35,27 +35,28 @@ const App = () => {
       return
 
     if (person) {
-      const message = await editPerson(person.id, {
+      const updatedPerson = await editPerson(person.id, {
         ...person,
         number: number.trim(),
       })
-      setMessage(message)
+      setPersons([
+        ...persons.map(p => (p.id === updatedPerson.id ? updatedPerson : p)),
+      ])
+      setMessage('Person has been succesfully updated')
       setTimeout(() => setMessage(null), 2000)
     }
 
     // if person is not already on contact
     if (!person) {
       person = {
-        id: persons.length + 1,
         name: name.trim(),
         number: number.trim(),
       }
-      const message = await addPerson(person)
-      setMessage(message)
+      const newPerson = await addPerson(person)
+      setPersons([...persons, newPerson])
+      setMessage('Person has been succesfully added')
       setTimeout(() => setMessage(null), 2000)
     }
-
-    loadPersons()
   }
 
   const handleDelete = async function (id, name) {
@@ -64,16 +65,16 @@ const App = () => {
     )
     if (!confirmationMessage) return
     try {
-      const message = await deletePerson(id)
-      setMessage(message)
+      const { id: deletedId } = await deletePerson(id)
+      setPersons([...persons.filter(p => p.id !== deletedId)])
+      setMessage('Deleted successfully')
       setTimeout(() => setMessage(null), 2000)
-      loadPersons()
     } catch (error) {
       console.error(error)
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     loadPersons()
   }, [])
 
@@ -113,19 +114,19 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
-      <FilterField handleSearchChange={handleSearchChange} />
+      <FilterField onSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
       <AddContactForm
-        handleNumberChange={handleNumberChange}
-        handleNameChange={handleNameChange}
+        onNumberChange={handleNumberChange}
+        onNameChange={handleNameChange}
         name={name}
         number={number}
-        handleSubmit={handleSubmit}
+        onSubmit={handleSubmit}
       />
       <h3>Numbers</h3>
       <PersonList
         filteredPersons={filteredPersons}
-        handleDelete={handleDelete}
+        onDelete={handleDelete}
       />
     </div>
   )

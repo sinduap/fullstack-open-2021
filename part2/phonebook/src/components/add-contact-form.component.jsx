@@ -1,24 +1,24 @@
-import React from 'react';
+import React from 'react'
 
 const AddContactForm = ({
-  handleSubmit,
+  onSubmit,
   name,
   number,
-  handleNumberChange,
-  handleNameChange,
+  onNumberChange,
+  onNameChange,
 }) => {
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <div>
-        name:{' '}
-        <input name='name' value={name} onChange={handleNameChange} required />
+        name:
+        <input name='name' value={name} onChange={onNameChange} required />
       </div>
       <div>
-        number:{' '}
+        number:
         <input
           name='number'
           value={number}
-          onChange={handleNumberChange}
+          onChange={onNumberChange}
           required
         />
       </div>
@@ -26,7 +26,7 @@ const AddContactForm = ({
         <button type='submit'>add</button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default AddContactForm;
+export default AddContactForm

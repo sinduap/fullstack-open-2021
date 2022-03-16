@@ -56,10 +56,8 @@ app.delete('/api/persons/:id', (req, res) => {
   if (!person) {
     return res.status(404).send('No person with that id')
   }
-
   data = data.filter(person => person.id !== id)
-  console.log(data)
-  res.status(204).send(`Person with id ${id} has been successfully deleted`)
+  res.json({ id })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -80,26 +78,20 @@ app.post('/api/persons', (req, res) => {
 
   data = [...data, newPerson]
 
-  return res.status(204).send(`Person has been successfully added`)
+  res.json(newPerson)
 })
 
 app.put('/api/persons/:id', (req, res) => {
   const updatedPerson = req.body
-
-  console.log(req.body, 'updated')
-
   if (!updatedPerson) {
     return res.status(404).json({ error: 'No data' })
   }
 
   const id = Number.parseInt(updatedPerson.id)
-
   data = data.filter(person => person.id !== id)
-
-  console.log(JSON.stringify(updatedPerson))
   data = [...data, updatedPerson]
 
-  return res.status(204).send(`Person has been successfully updated`)
+  return res.json(updatedPerson)
 })
 
 app.get('/info', (req, res) => {

@@ -1,8 +1,8 @@
 import React from "react";
 
-const Button = ({ text, handleDelete }) => {
+const Button = ({ text, onDelete }) => {
   return (
-    <button type="button" onClick={handleDelete}>
+    <button type="button" onClick={onDelete}>
       {text}
     </button>
   );
