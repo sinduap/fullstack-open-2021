@@ -12,12 +12,6 @@ const App = () => {
   const [search, setSearch] = useState('')
   const [message, setMessage] = useState(null)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadPersons = async function () {
-    const persons = await getPersons()
-    setPersons(persons)
-  }
-
   const handleSubmit = async function (event) {
     event.preventDefault()
     setName('')
@@ -28,13 +22,12 @@ const App = () => {
     )
 
     // if person already on contact
-    if (
-      person &&
-      !window.confirm(`Are you want to update ${person.name} contact?`)
-    )
-      return
-
     if (person) {
+      const confirmationMessage = window.confirm(
+        `Are you want to update ${person.name} contact?`
+      )
+      if (!confirmationMessage) return
+
       const updatedPerson = await editPerson(person.id, {
         ...person,
         number: number.trim(),
@@ -75,7 +68,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    loadPersons()
+    getPersons().then(persons => setPersons(persons))
   }, [])
 
   useEffect(() => {

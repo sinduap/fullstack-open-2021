@@ -1,6 +1,10 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
+import { unknownEndpoint, errorHandler } from './middleware.js'
+import 'dotenv/config'
+import Person from './models/Person.js'
+import mongoose from 'mongoose'
 
 const app = express()
 app.use(express.json())
@@ -10,54 +14,34 @@ morgan.token('body', req => {
   return JSON.stringify(req.body)
 })
 app.use(morgan(':method :url :status :total-time :body'))
-
 app.use(express.static('build'))
+mongoose.connect(process.env.MONGODB_URI)
 
-let data = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-]
+let data = []
 
-app.get('/api/persons', (req, res) => {
-  res.json(data)
+app.get('/api/persons', async (req, res) => {
+  data = await Person.find()
+  res.status(201).json(data)
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number.parseInt(req.params.id)
+  const { id } = req.params
   const person = data.find(person => person.id === id)
   if (!person) {
     return res.status(404).send('No id found')
   }
-  res.json(person)
+  res.status(201).json(person)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number.parseInt(req.params.id)
+  const { id } = req.params
   const person = data.find(person => person.id === id)
 
   if (!person) {
     return res.status(404).send('No person with that id')
   }
   data = data.filter(person => person.id !== id)
-  res.json({ id })
+  res.status(201).json({ id })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -78,7 +62,7 @@ app.post('/api/persons', (req, res) => {
 
   data = [...data, newPerson]
 
-  res.json(newPerson)
+  res.status(201).json(newPerson)
 })
 
 app.put('/api/persons/:id', (req, res) => {
@@ -87,21 +71,24 @@ app.put('/api/persons/:id', (req, res) => {
     return res.status(404).json({ error: 'No data' })
   }
 
-  const id = Number.parseInt(updatedPerson.id)
+  const { id } = updatedPerson
   data = data.filter(person => person.id !== id)
   data = [...data, updatedPerson]
 
-  return res.json(updatedPerson)
+  res.status(201).json(updatedPerson)
 })
 
 app.get('/info', (req, res) => {
   const response = `<p>Phonebook has info for ${
     data.length
   } people</p><p>${new Date()}</p>`
-  res.send(response)
+  res.status(201).send(response)
 })
 
-const PORT = process.env.PORT || 3001
+app.use(errorHandler)
+app.use(unknownEndpoint)
+
+const PORT = process.env.PORT
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
