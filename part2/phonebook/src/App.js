@@ -14,8 +14,8 @@ const App = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadPersons = async function () {
-    const data = await getPersons()
-    setPersons(data)
+    const persons = await getPersons()
+    setPersons(persons)
   }
 
   const handleSubmit = async function (event) {
@@ -117,17 +117,14 @@ const App = () => {
       <FilterField onSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
       <AddContactForm
-        onNumberChange={handleNumberChange}
-        onNameChange={handleNameChange}
         name={name}
         number={number}
+        onNumberChange={handleNumberChange}
+        onNameChange={handleNameChange}
         onSubmit={handleSubmit}
       />
       <h3>Numbers</h3>
-      <PersonList
-        filteredPersons={filteredPersons}
-        onDelete={handleDelete}
-      />
+      <PersonList filteredPersons={filteredPersons} onDelete={handleDelete} />
     </div>
   )
 }
