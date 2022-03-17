@@ -1,13 +1,15 @@
-import React from 'react';
+import React from 'react'
 
-import './notification.style.css';
+import './notification.style.css'
 
 const Notification = ({ message }) => {
   if (message === null) {
-    return null;
+    return null
   }
 
-  return <div className='success'>{message}</div>;
-};
+  return (
+    <div className={message.success ? 'success' : 'fail'}>{message.text}</div>
+  )
+}
 
-export default Notification;
+export default Notification

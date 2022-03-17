@@ -1,8 +1,10 @@
 import mongoose from 'mongoose'
 
+mongoose.set('runValidators', true)
+
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: { type: String, minlength: 3, required: true, unique: true },
+  number: { type: String, minlength: 8, required: true },
 })
 
 personSchema.set('toJSON', {
@@ -13,4 +15,6 @@ personSchema.set('toJSON', {
   },
 })
 
-export default mongoose.model('Person', personSchema)
+const Person = mongoose.model('Person', personSchema)
+
+export default Person

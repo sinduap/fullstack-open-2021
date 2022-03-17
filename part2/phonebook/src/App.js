@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
+import * as api from './api/index'
+
 import AddContactForm from './components/add-contact-form.component'
 import PersonList from './components/person-list.component'
 import FilterField from './components/filter-field.component'
-import { getPersons, addPerson, deletePerson, editPerson } from './helpers'
 import Notification from './components/notification.component'
 
 const App = () => {
@@ -28,15 +29,20 @@ const App = () => {
       )
       if (!confirmationMessage) return
 
-      const updatedPerson = await editPerson(person.id, {
-        ...person,
-        number: number.trim(),
-      })
-      setPersons([
-        ...persons.map(p => (p.id === updatedPerson.id ? updatedPerson : p)),
-      ])
-      setMessage('Person has been succesfully updated')
-      setTimeout(() => setMessage(null), 2000)
+      person = { ...person, number: number.trim() }
+
+      try {
+        const response = await api.editPerson(person.id, person)
+        const newPerson = response.data
+        setPersons([...persons.map(p => (p.id === person.id ? newPerson : p))])
+        setMessage({
+          success: true,
+          text: 'Person has been succesfully updated',
+        })
+        setTimeout(() => setMessage(null), 2000)
+      } catch (error) {
+        setMessage({ success: false, text: error.response.data.error })
+      }
     }
 
     // if person is not already on contact
@@ -45,10 +51,15 @@ const App = () => {
         name: name.trim(),
         number: number.trim(),
       }
-      const newPerson = await addPerson(person)
-      setPersons([...persons, newPerson])
-      setMessage('Person has been succesfully added')
-      setTimeout(() => setMessage(null), 2000)
+      try {
+        const response = await api.addPerson(person)
+        const newPerson = response.data
+        setPersons([...persons, newPerson])
+        setMessage({ success: true, text: 'Person has been succesfully added' })
+        setTimeout(() => setMessage(null), 2000)
+      } catch (error) {
+        setMessage({ success: false, text: error.response.data.error })
+      }
     }
   }
 
@@ -58,28 +69,29 @@ const App = () => {
     )
     if (!confirmationMessage) return
     try {
-      const { id: deletedId } = await deletePerson(id)
-      setPersons([...persons.filter(p => p.id !== deletedId)])
-      setMessage('Deleted successfully')
+      await api.deletePerson(id)
+      setPersons([...persons.filter(p => p.id !== id)])
+      setMessage({ success: true, text: 'Deleted successfully' })
       setTimeout(() => setMessage(null), 2000)
     } catch (error) {
-      console.error(error)
+      setMessage({ success: false, text: error.response.data.error })
     }
   }
 
   useEffect(() => {
-    getPersons().then(persons => setPersons(persons))
+    api
+      .getAllPersons()
+      .then(response => response.data)
+      .then(persons => setPersons(persons))
   }, [])
 
   useEffect(() => {
     if (!message) {
       return
     }
-
     const id = setTimeout(() => {
       setMessage(null)
     }, 2000)
-
     return () => {
       if (id) {
         clearTimeout(id)
@@ -108,7 +120,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Notification message={message} />
       <FilterField onSearchChange={handleSearchChange} />
-      <h3>Add a new</h3>
+      <h3>Add a new contact</h3>
       <AddContactForm
         name={name}
         number={number}
