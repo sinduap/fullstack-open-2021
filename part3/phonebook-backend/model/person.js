@@ -15,6 +15,4 @@ personSchema.set('toJSON', {
   },
 })
 
-const Person = mongoose.model('Person', personSchema)
-
-export default Person
+export default mongoose.model('Person', personSchema)

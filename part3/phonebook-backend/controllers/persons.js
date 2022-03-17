@@ -1,6 +1,7 @@
-import Person from '../models/person.js'
+import Person from '../model/person.js'
 
 export const getPersons = async (req, res, next) => {
+  console.log(process.env.MONGOBB_URI)
   try {
     const persons = await Person.find({})
     res.status(200).json(persons)
