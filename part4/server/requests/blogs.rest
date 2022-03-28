@@ -1,0 +1,61 @@
+### Get all blogs
+GET http://localhost:3001/api/blogs
+
+
+### Post a blog
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZ1dGlrYXNpaGEyIiwibmFtZSI6IkZ1dGkgS2FzaWhhIiwiaWQiOiI2MjQxNmQ4MDYyNTI0ZDYzZWUxMTFhNDgiLCJpYXQiOjE2NDg0NTUwNTB9.Igj9rKUghhZqw6F9Bai5Kah8DqnFlvgewGYF4X0RHM8
+
+{
+    "title": "My Blog 4",
+    "author": "Futi Kasiha",
+    "url": "http://facebook.com",
+    "userId": "6240c8c5cd4b249f7cf0b0fd"
+}
+
+### Post an invalid blog
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+    "author": "Sindu Andita Pratama"
+}
+
+###
+DELETE http://localhost:3001/api/blogs/
+
+### Delete post
+DELETE http://localhost:3001/api/blogs/624158feb8c7c0422e8a10c5
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZ1dGlrYXNpaGEiLCJuYW1lIjoiRnV0aSBLYXNpaGEiLCJpZCI6IjYyNDE1MmUzMTc3OTk2ZTQ4M2NkY2M1OSIsImlhdCI6MTY0ODQ0ODk5Nn0.SzLMwSamAWLv23Z1o5kKZIEcO7nwT0Q31WgQEIMg6SY
+
+### Update post
+PATCH http://localhost:3001/api/blogs/623f2340927b9bed259b4491
+Content-Type: application/json
+
+{
+    "author": "Sindu AP"
+}
+
+### Create User
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "futikasiha2",
+    "name": "Futi Kasiha",
+    "password": "interisti"
+}
+
+### Get User
+GET http://localhost:3001/api/users/6240c8c5cd4b249f7cf0b0fd
+
+
+### Login User
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "username": "futikasiha2",
+    "password": "interisti"
+}
